@@ -1,0 +1,52 @@
+body {
+  font-family: Arial, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card {
+  border-radius: 10px;
+  padding: 20px;
+  width: 300px;
+  margin: 80px auto;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease;
+}
+
+button {
+  margin: 10px 5px;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+}
+
+/* Light Theme */
+.light-theme {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+.light-theme .card {
+  background-color: #ffffff;
+}
+
+.light-theme button {
+  background-color: #222;
+  color: #fff;
+}
+
+/* Dark Theme */
+.dark-theme {
+  background-color: #121212;
+  color: #eee;
+}
+
+.dark-theme .card {
+  background-color: #1e1e1e;
+}
+
+.dark-theme button {
+  background-color: #eee;
+  color: #121212;
+}
