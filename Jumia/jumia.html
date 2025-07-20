@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jumia Store</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <a href="#" class="logo">Jumia</a>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search for Products..." />
+        <button id="searchBtn"><i class="fas fa-search"></i></button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <h1>Welcome to Jumia Store</h1>
+      <p>Best deals on electronics, fashion & more</p>
+    </div>
+  </section>
+
+<section class="product-section">
+  <div class="container">
+    <h2><i class="fas fa-tags"></i> Categories</h2>
+    
+    <div class="category-tabs">
+  <button class="tab-btn active" data-category="all">All</button>
+  <button class="tab-btn" data-category="mobiles">Mobiles</button>
+  <button class="tab-btn" data-category="electronics">Electronics</button>
+  <button class="tab-btn" data-category="fashion">Fashion</button>
+  <button class="tab-btn" data-category="home appliances">Home Appliances</button>
+  <button class="tab-btn" data-category="accessories">Accessories</button>
+  <button class="tab-btn" data-category="computers">Computers</button>
+  <button class="tab-btn" data-category="tablets">Tablets</button>
+  <button class="tab-btn" data-category="printers">Printers</button>
+  <button class="tab-btn" data-category="kitchen appliances">Kitchen Appliances</button>
+  <button class="tab-btn" data-category="wearables">Wearables</button>
+  <button class="tab-btn" data-category="audio">Audio</button>
+  <button class="tab-btn" data-category="personal care">Personal Care</button>
+  <button class="tab-btn" data-category="deals">Deals of the Day</button>
+  <button class="tab-btn" data-category="toprated">Top Rated</button>
+</div>
+
+
+
+<div class="product-grid" id="productGrid"></div>
+
+  </div>
+</section>
+
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2025 Jumia_Abdelwhab. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
