@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="watchlist-header">
+        <h2>My Watchlist</h2>
+        <a href="{{ url_for('add_movie') }}" class="btn btn-add">+ Add Movie</a>
+    </div>
+
+    <ul class="movie-list">
+        {% for movie in movies %}
+            <li>
+                <span class="movie-title">{{ movie.title }} ({{ movie.year }})</span>
+                <div class="movie-actions">
+                    <a href="{{ url_for('edit_movie', movie_id=movie.id) }}" class="btn btn-edit">Edit</a>
+                    
+                    <form action="{{ url_for('delete_movie', movie_id=movie.id) }}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-delete">Delete</button>
+                    </form>
+                </div>
+            </li>
+        {% else %}
+            <p>Your watchlist is empty. Add a movie to get started!</p>
+        {% endfor %}
+    </ul>
+{% endblock %}

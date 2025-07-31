@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Add a New Movie</h2>
+    <form class="add-form" action="{{ url_for('add_movie') }}" method="post">
+        <label for="title">Movie Title:</label>
+        <input type="text" id="title" name="title" required autofocus>
+
+        <label for="year">Release Year:</label>
+        <input type="number" id="year" name="year" placeholder="e.g., 1994" min="1888">
+        <button type="submit" class="btn btn-add">Add to Watchlist</button>
+    </form>
+{% endblock %}

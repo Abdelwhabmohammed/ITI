@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Edit Movie</h2>
+    
+    <form class="add-form" action="{{ url_for('edit_movie', movie_id=movie.id) }}" method="post">
+        
+        <label for="title">Movie Title:</label>
+        <input type="text" id="title" name="title" value="{{ movie.title }}" required>
+
+        <label for="year">Release Year:</label>
+        <input type="number" id="year" name="year" value="{{ movie.year }}" min="1888">
+        
+        <button type="submit" class="btn btn-add">Save Changes</button>
+    </form>
+{% endblock %}
