@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Schedule - Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Manage Schedule</h1>
+            <p>Add, edit, and manage your availability</p>
+            <div class="dashboard-actions">
+                <a href="{% url 'doctor_dashboard' %}" class="btn btn-outline">← Back to Dashboard</a>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">➕</div>
+                    <h2>Add New Schedule</h2>
+                </div>
+                
+                <form method="post" id="scheduleForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="start_time">Start Time</label>
+                        <input type="time" id="start_time" name="start_time" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="end_time">End Time</label>
+                        <input type="time" id="end_time" name="end_time" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="is_available" checked> Available for appointments
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-full">Add Schedule</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon blue">📅</div>
+                    <h2>Current Schedule</h2>
+                </div>
+                
+                {% if schedules %}
+                    {% for schedule in schedules %}
+                    <div class="appointment-item" id="schedule-{{ schedule.id }}">
+                        <div class="appointment-info">
+                            <h4>{{ schedule.date }}</h4>
+                            <p><strong>Time:</strong> {{ schedule.start_time }} - {{ schedule.end_time }}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="status-badge {% if schedule.is_available %}approved{% else %}disapproved{% endif %}">
+                                    {% if schedule.is_available %}Available{% else %}Unavailable{% endif %}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-outline" onclick="toggleAvailability({{ schedule.id }})">
+                                {% if schedule.is_available %}Make Unavailable{% else %}Make Available{% endif %}
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteSchedule({{ schedule.id }})">Delete</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center">
+                        <p>No schedule added yet. Add your first schedule slot above.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Set minimum date to today
+document.addEventListener('DOMContentLoaded', function() {
+    const dateInput = document.getElementById('date');
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+});
+
+function deleteSchedule(scheduleId) {
+    if (confirm('Are you sure you want to delete this schedule slot?')) {
+        fetch(`/api/delete-schedule/${scheduleId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById(`schedule-${scheduleId}`).remove();
+                showNotification('Schedule deleted successfully!', 'success');
+            } else {
+                showNotification('Error deleting schedule: ' + data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error deleting schedule. Please try again.', 'error');
+        });
+    }
+}
+
+function toggleAvailability(scheduleId) {
+    fetch(`/api/toggle-schedule/${scheduleId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload(); // Reload to update the UI
+        } else {
+            showNotification('Error updating availability: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error updating availability. Please try again.', 'error');
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type}`;
+    notification.textContent = message;
+    
+    const container = document.querySelector('.container');
+    container.insertBefore(notification, container.firstChild);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+</script>
+{% endblock %}
+

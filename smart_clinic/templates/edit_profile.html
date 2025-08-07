@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="form-container">
+            <div class="text-center mb-3">
+                <h1>Edit Profile</h1>
+                <p>Update your personal information</p>
+            </div>
+            
+            <form method="post" id="editProfileForm">
+                {% csrf_token %}
+                
+                {% if user.role == 'patient' %}
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-control" value="{{ user.patient.name }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="age">Age</label>
+                        <input type="number" id="age" name="age" class="form-control" value="{{ user.patient.age }}" min="1" max="120" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">Gender</label>
+                        <select id="gender" name="gender" class="form-control" required>
+                            <option value="male" {% if user.patient.gender == 'male' %}selected{% endif %}>Male</option>
+                            <option value="female" {% if user.patient.gender == 'female' %}selected{% endif %}>Female</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="blood_type">Blood Type</label>
+                        <select id="blood_type" name="blood_type" class="form-control" required>
+                            <option value="A+" {% if user.patient.blood_type == 'A+' %}selected{% endif %}>A+</option>
+                            <option value="A-" {% if user.patient.blood_type == 'A-' %}selected{% endif %}>A-</option>
+                            <option value="B+" {% if user.patient.blood_type == 'B+' %}selected{% endif %}>B+</option>
+                            <option value="B-" {% if user.patient.blood_type == 'B-' %}selected{% endif %}>B-</option>
+                            <option value="AB+" {% if user.patient.blood_type == 'AB+' %}selected{% endif %}>AB+</option>
+                            <option value="AB-" {% if user.patient.blood_type == 'AB-' %}selected{% endif %}>AB-</option>
+                            <option value="O+" {% if user.patient.blood_type == 'O+' %}selected{% endif %}>O+</option>
+                            <option value="O-" {% if user.patient.blood_type == 'O-' %}selected{% endif %}>O-</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="medical_history">Medical History</label>
+                        <textarea id="medical_history" name="medical_history" class="form-control" placeholder="Enter any relevant medical history...">{{ user.patient.medical_history }}</textarea>
+                    </div>
+                    
+                {% elif user.role == 'doctor' %}
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" class="form-control" value="{{ user.doctor.name }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="specialization">Specialization</label>
+                        <select id="specialization" name="specialization" class="form-control" required>
+                            <option value="cardiology" {% if user.doctor.specialization == 'cardiology' %}selected{% endif %}>Cardiology</option>
+                            <option value="dermatology" {% if user.doctor.specialization == 'dermatology' %}selected{% endif %}>Dermatology</option>
+                            <option value="neurology" {% if user.doctor.specialization == 'neurology' %}selected{% endif %}>Neurology</option>
+                            <option value="orthopedics" {% if user.doctor.specialization == 'orthopedics' %}selected{% endif %}>Orthopedics</option>
+                            <option value="pediatrics" {% if user.doctor.specialization == 'pediatrics' %}selected{% endif %}>Pediatrics</option>
+                            <option value="psychiatry" {% if user.doctor.specialization == 'psychiatry' %}selected{% endif %}>Psychiatry</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="clinic">Clinic</label>
+                        <input type="text" id="clinic" name="clinic" class="form-control" value="{{ user.doctor.clinic }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="license_no">License Number</label>
+                        <input type="text" id="license_no" name="license_no" class="form-control" value="{{ user.doctor.license_no }}" required>
+                    </div>
+                {% endif %}
+                
+                <button type="submit" class="btn btn-primary btn-full">Update Profile</button>
+            </form>
+            
+            <div class="text-center mt-3">
+                {% if user.role == 'patient' %}
+                    <p><a href="{% url 'patient_dashboard' %}">Back to Dashboard</a></p>
+                {% elif user.role == 'doctor' %}
+                    <p><a href="{% url 'doctor_dashboard' %}">Back to Dashboard</a></p>
+                {% elif user.role == 'admin' %}
+                    <p><a href="{% url 'admin_dashboard' %}">Back to Dashboard</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

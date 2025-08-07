@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Doctor Dashboard - Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Good morning, {{ doctor.name }}!</h1>
+            <p>You have {{ week_schedule|length }} days in this week's schedule</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-number">{{ total_patients }}</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-number">{{ completed_appointments }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-number">{{ pending_appointments }}</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-number">4.8</div>
+                <div class="stat-label">Rating</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon blue">📅</div>
+                    <h2>This Week's Schedule</h2>
+                    <div style="margin-left: auto;">
+                        <span>{{ week_range }}</span>
+                    </div>
+                </div>
+                
+                <div class="week-schedule">
+                    {% for day in week_schedule %}
+                    <div class="day-schedule {% if day.is_today %}today{% endif %}">
+                        <div class="day-header">
+                            <h3>{{ day.day_name }}</h3>
+                            <span class="date">{{ day.date_display }}</span>
+                            {% if day.is_today %}
+                                <span class="today-badge">Today</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="day-appointments">
+                            {% if day.appointments %}
+                                {% for appointment in day.appointments %}
+                                <div class="appointment-item">
+                                    <div class="appointment-info">
+                                        <h4>{{ appointment.patient.name }}</h4>
+                                        <p>{{ appointment.reason }}</p>
+                                        <p>🕘 {{ appointment.time }} • 30 min</p>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        <span class="status-badge {{ appointment.status }}">{{ appointment.status|title }}</span>
+                                        <button class="btn btn-outline btn-sm" onclick="viewPatient({{ appointment.patient.user.id }})">View Patient</button>
+                                        {% if appointment.status == 'approved' %}
+                                            <button class="btn btn-primary btn-sm" onclick="startConsultation({{ appointment.id }})">Start Consultation</button>
+                                        {% elif appointment.status == 'pending' %}
+                                            <button class="btn btn-success btn-sm" onclick="approveAppointment({{ appointment.id }})">Approve</button>
+                                            <button class="btn btn-danger btn-sm" onclick="disapproveAppointment({{ appointment.id }})">Disapprove</button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="no-appointments">
+                                    <p>No appointments scheduled</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon green">⚡</div>
+                        <h2>Quick Actions</h2>
+                    </div>
+                    
+                    <div class="dashboard-actions">
+                        <a href="{% url 'manage_schedule' %}" class="btn btn-primary">📅 Manage Schedule</a>
+                        <a href="{% url 'view_all_patients' %}" class="btn btn-outline">👥 View All Patients</a>
+                        <a href="{% url 'edit_profile' %}" class="btn btn-outline">✏️ Edit Profile</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon teal">🩺</div>
+                        <h2>Professional Information</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Specialization</label>
+                        <div class="role-badge doctor">{{ doctor.specialization|title }}</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>License</label>
+                        <p>License #: {{ doctor.license_no }}</p>
+                        <p>Expires: Dec 2025</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Clinic Information</label>
+                        <p>📍 {{ doctor.clinic }}</p>
+                        <p>📞 +1 (555) 234-5678</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Admin Dashboard</h1>
+            <p>Manage users, clinics, and oversee the entire healthcare system</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card blue">
+                <div class="stat-number">{{ patients|length }}</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-number">{{ doctors|length }}</div>
+                <div class="stat-label">Total Doctors</div>
+            </div>
+            <div class="stat-card yellow">
+                <div class="stat-number">{{ appointments|length }}</div>
+                <div class="stat-label">Total Appointments</div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-number">5</div>
+                <div class="stat-label">Active Clinics</div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon blue">👥</div>
+                    <h2>Patients Management</h2>
+                </div>
+                
+                {% for patient in patients|slice:":5" %}
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>{{ patient.name }}</h4>
+                        <p>Age: {{ patient.age }} • {{ patient.gender|title }}</p>
+                        <p>Blood Type: {{ patient.blood_type }}</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn btn-outline" onclick="viewPatientDetails({{ patient.user.id }})">View Details</button>
+                        <button class="btn btn-outline" onclick="editPatient({{ patient.user.id }})">Edit</button>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="text-center mt-2">
+                    <button class="btn btn-primary" onclick="viewAllPatients()">View All Patients</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">🩺</div>
+                    <h2>Doctors Management</h2>
+                </div>
+                
+                {% for doctor in doctors|slice:":5" %}
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>{{ doctor.name }}</h4>
+                        <p>{{ doctor.specialization|title }}</p>
+                        <p>{{ doctor.clinic }}</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <button class="btn btn-outline" onclick="viewDoctorDetails({{ doctor.user.id }})">View Details</button>
+                        <button class="btn btn-outline" onclick="editDoctor({{ doctor.user.id }})">Edit</button>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="text-center mt-2">
+                    <button class="btn btn-success" onclick="viewAllDoctors()">View All Doctors</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon yellow">📅</div>
+                <h2>Recent Appointments</h2>
+            </div>
+            
+            {% for appointment in appointments|slice:":10" %}
+            <div class="appointment-item">
+                <div class="appointment-info">
+                    <h4>{{ appointment.patient.name }} → {{ appointment.doctor.name }}</h4>
+                    <p>{{ appointment.doctor.specialization|title }}</p>
+                    <p>📅 {{ appointment.date }} at {{ appointment.time }}</p>
+                    <p><strong>Reason:</strong> {{ appointment.reason }}</p>
+                </div>
+                <div class="appointment-actions">
+                    <span class="status-badge {{ appointment.status }}">{{ appointment.status|title }}</span>
+                    <button class="btn btn-outline" onclick="viewAppointmentDetails({{ appointment.id }})">View Details</button>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="text-center mt-2">
+                <button class="btn btn-warning" onclick="viewAllAppointments()">View All Appointments</button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

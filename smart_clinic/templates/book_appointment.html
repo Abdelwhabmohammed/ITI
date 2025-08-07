@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Appointment - Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <div class="card-icon blue">📅</div>
+            <h1>Book an Appointment</h1>
+            <p>Find and book appointments with our qualified doctors</p>
+        </div>
+
+        <form method="post" id="bookingForm">
+            {% csrf_token %}
+            <div class="booking-steps">
+                <div class="booking-step">
+                    <h3><span class="step-number">1</span> Choose Specialization</h3>
+                    
+                    <div class="form-group">
+                        <input type="text" id="searchSpecialization" class="form-control" placeholder="Search specializations...">
+                    </div>
+                    
+                    <div class="specialization-grid">
+                        <button type="button" class="specialization-btn" data-specialization="cardiology">Cardiology</button>
+                        <button type="button" class="specialization-btn" data-specialization="dermatology">Dermatology</button>
+                        <button type="button" class="specialization-btn" data-specialization="neurology">Neurology</button>
+                        <button type="button" class="specialization-btn" data-specialization="orthopedics">Orthopedics</button>
+                        <button type="button" class="specialization-btn" data-specialization="pediatrics">Pediatrics</button>
+                        <button type="button" class="specialization-btn" data-specialization="psychiatry">Psychiatry</button>
+                    </div>
+                </div>
+
+                <div class="booking-step">
+                    <h3><span class="step-number">2</span> Select Doctor</h3>
+                    
+                    <div class="doctor-list" id="doctorList">
+                        <div class="text-center">
+                            <p>Please select a specialization first</p>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="selectedDoctorId" name="doctor_id">
+                </div>
+
+                <div class="booking-step">
+                    <h3><span class="step-number">3</span> Choose Date & Time</h3>
+                    
+                    <div class="form-group">
+                        <label for="appointmentDate">Select Date</label>
+                        <input type="date" id="appointmentDate" name="date" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="appointmentTime">Select Time</label>
+                        <select id="appointmentTime" name="time" class="form-control" required>
+                            <option value="">Choose available time</option>
+                            <option value="09:00">09:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="14:00">02:00 PM</option>
+                            <option value="15:00">03:00 PM</option>
+                            <option value="16:00">04:00 PM</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reason">Reason for Visit</label>
+                        <textarea id="reason" name="reason" class="form-control" placeholder="Please describe the reason for your appointment..." required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full">Book Appointment</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Doctor template for JavaScript -->
+<template id="doctorTemplate">
+    <div class="doctor-item" data-doctor-id="">
+        <div class="doctor-avatar"></div>
+        <div class="doctor-info">
+            <h4 class="doctor-name"></h4>
+            <p class="doctor-specialization"></p>
+            <p class="doctor-clinic"></p>
+            <div class="doctor-rating">⭐ 4.9 • 15 years</div>
+            <div class="doctor-availability">Available: Tomorrow</div>
+        </div>
+    </div>
+</template>
+{% endblock %}
+

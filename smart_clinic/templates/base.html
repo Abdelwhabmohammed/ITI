@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Clinic{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Smart Clinic</div>
+                <nav>
+                    <ul class="nav-links">
+                        {% if user.role == 'patient' %}
+                            <li><a href="{% url 'patient_dashboard' %}" {% if request.resolver_match.url_name == 'patient_dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+                            <li><a href="{% url 'book_appointment' %}" {% if request.resolver_match.url_name == 'book_appointment' %}class="active"{% endif %}>Book Appointment</a></li>
+                        {% elif user.role == 'doctor' %}
+                            <li><a href="{% url 'doctor_dashboard' %}" {% if request.resolver_match.url_name == 'doctor_dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+                        {% elif user.role == 'admin' %}
+                            <li><a href="{% url 'admin_dashboard' %}" {% if request.resolver_match.url_name == 'admin_dashboard' %}class="active"{% endif %}>Dashboard</a></li>
+                        {% endif %}
+                        <li><a href="{% url 'edit_profile' %}" {% if request.resolver_match.url_name == 'edit_profile' %}class="active"{% endif %}>Profile</a></li>
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    {% endif %}
+
+    <main>
+        {% if messages %}
+            <div class="container">
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}error{% else %}{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>
+

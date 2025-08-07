@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Reschedule Appointment - Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Reschedule Appointment</h1>
+            <p>Change your appointment date and time</p>
+            <div class="dashboard-actions">
+                <a href="{% url 'patient_dashboard' %}" class="btn btn-outline">← Back to Dashboard</a>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon blue">📅</div>
+                    <h2>Current Appointment</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label>Doctor</label>
+                    <p>{{ appointment.doctor.name }}</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Specialization</label>
+                    <p>{{ appointment.doctor.specialization }}</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Current Date</label>
+                    <p>{{ appointment.date }}</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Current Time</label>
+                    <p>{{ appointment.time }}</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Reason</label>
+                    <p>{{ appointment.reason }}</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Status</label>
+                    <span class="status-badge {{ appointment.status }}">{{ appointment.status|title }}</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">🔄</div>
+                    <h2>Select New Date & Time</h2>
+                </div>
+                
+                <form method="post" id="rescheduleForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="date">New Date</label>
+                        <select id="date" name="date" class="form-control" required onchange="loadAvailableTimes()">
+                            <option value="">Select a date</option>
+                            {% for schedule in available_schedules %}
+                                <option value="{{ schedule.date|date:"Y-m-d" }}">{{ schedule.date }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="time">New Time</label>
+                        <select id="time" name="time" class="form-control" required disabled>
+                            <option value="">Select a date first</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success btn-full" id="rescheduleBtn" disabled>
+                        Reschedule Appointment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function loadAvailableTimes() {
+    const dateSelect = document.getElementById('date');
+    const timeSelect = document.getElementById('time');
+    const rescheduleBtn = document.getElementById('rescheduleBtn');
+    
+    const selectedDate = dateSelect.value;
+    
+    if (!selectedDate) {
+        timeSelect.innerHTML = '<option value="">Select a date first</option>';
+        timeSelect.disabled = true;
+        rescheduleBtn.disabled = true;
+        return;
+    }
+    
+    // Show loading
+    timeSelect.innerHTML = '<option value="">Loading available times...</option>';
+    timeSelect.disabled = true;
+    rescheduleBtn.disabled = true;
+    
+    // Fetch available times
+    fetch(`/api/available-times/?doctor_id={{ appointment.doctor.user.id }}&date=${selectedDate}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                timeSelect.innerHTML = '<option value="">Error loading times</option>';
+                showNotification('Error loading available times: ' + data.error, 'error');
+                return;
+            }
+            
+            timeSelect.innerHTML = '<option value="">Select a time</option>';
+            
+            if (data.times && data.times.length > 0) {
+                data.times.forEach(timeSlot => {
+                    const option = document.createElement('option');
+                    option.value = timeSlot.time;
+                    option.textContent = timeSlot.display;
+                    timeSelect.appendChild(option);
+                });
+                timeSelect.disabled = false;
+            } else {
+                timeSelect.innerHTML = '<option value="">No available times</option>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            timeSelect.innerHTML = '<option value="">Error loading times</option>';
+            showNotification('Error loading available times. Please try again.', 'error');
+        });
+}
+
+// Enable reschedule button when time is selected
+document.getElementById('time').addEventListener('change', function() {
+    const rescheduleBtn = document.getElementById('rescheduleBtn');
+    rescheduleBtn.disabled = !this.value;
+});
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type}`;
+    notification.textContent = message;
+    
+    const container = document.querySelector('.container');
+    container.insertBefore(notification, container.firstChild);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+</script>
+{% endblock %}
+

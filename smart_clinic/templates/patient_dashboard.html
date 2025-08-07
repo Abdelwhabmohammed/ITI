@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Dashboard - Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Welcome back, {{ patient.name }}!</h1>
+            <p>Manage your appointments and health records</p>
+            <div class="dashboard-actions">
+                <a href="{% url 'book_appointment' %}" class="btn btn-primary">📅 Book New Appointment</a>
+                <a href="{% url 'medical_records' %}" class="btn btn-outline">📋 View Medical Records</a>
+                <a href="{% url 'edit_profile' %}" class="btn btn-outline">✏️ Edit Profile</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">📅</div>
+                <h2>Upcoming Appointments</h2>
+            </div>
+            
+            {% if appointments %}
+                {% for appointment in appointments %}
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>{{ appointment.doctor.name }}</h4>
+                        <p><strong>{{ appointment.doctor.specialization|title }}</strong></p>
+                        <p>📅 {{ appointment.date }} at {{ appointment.time }}</p>
+                        <p>📍 {{ appointment.doctor.clinic }}</p>
+                        <p><strong>Reason:</strong> {{ appointment.reason }}</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <span class="status-badge {{ appointment.status }}">{{ appointment.status|title }}</span>
+                        {% if appointment.status == 'pending' or appointment.status == 'approved' %}
+                            <a href="{% url 'reschedule_appointment' appointment.id %}" class="btn btn-outline">Reschedule</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center">
+                    <p>No appointments scheduled.</p>
+                    <a href="{% url 'book_appointment' %}" class="btn btn-primary">Book Your First Appointment</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon green">📋</div>
+                <h2>Recent Medical History</h2>
+            </div>
+            
+            {% if recent_appointments %}
+                {% for appointment in recent_appointments %}
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>{{ appointment.reason }}</h4>
+                        <p>{{ appointment.doctor.name }} - {{ appointment.doctor.specialization|title }}</p>
+                        <p>{{ appointment.doctor.clinic }}</p>
+                    </div>
+                    <div class="appointment-actions">
+                        <span>{{ appointment.date }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center">
+                    <p>No medical history available.</p>
+                    <p class="text-muted">Your completed appointments will appear here.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Medical Records - Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Medical Records</h1>
+            <p>View your medical history and past appointments</p>
+            <div class="dashboard-actions">
+                <a href="{% url 'patient_dashboard' %}" class="btn btn-outline">← Back to Dashboard</a>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon blue">👤</div>
+                    <h2>Personal Information</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <p>{{ patient.name }}</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Age</label>
+                    <p>{{ patient.age }} years old</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Gender</label>
+                    <p>{{ patient.gender|title }}</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Blood Type</label>
+                    <div class="role-badge patient">{{ patient.blood_type }}</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Medical History</label>
+                    {% if patient.medical_history %}
+                        <p>{{ patient.medical_history }}</p>
+                    {% else %}
+                        <p class="text-muted">No medical history recorded.</p>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <a href="{% url 'edit_profile' %}" class="btn btn-outline btn-full">Edit Profile</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon green">📋</div>
+                    <h2>Appointment History</h2>
+                </div>
+                
+                {% if appointments %}
+                    {% for appointment in appointments %}
+                    <div class="appointment-item">
+                        <div class="appointment-info">
+                            <h4>{{ appointment.date }} at {{ appointment.time }}</h4>
+                            <p><strong>Doctor:</strong> {{ appointment.doctor.name }}</p>
+                            <p><strong>Specialization:</strong> {{ appointment.doctor.specialization }}</p>
+                            <p><strong>Clinic:</strong> {{ appointment.doctor.clinic }}</p>
+                            <p><strong>Reason for Visit:</strong> {{ appointment.reason }}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="status-badge {{ appointment.status }}">{{ appointment.status|title }}</span>
+                            </p>
+                        </div>
+                        <div class="appointment-actions">
+                            <small class="text-muted">Completed Visit</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center">
+                        <p>No completed appointments found.</p>
+                        <p class="text-muted">Your approved appointment history will appear here.</p>
+                        <a href="{% url 'book_appointment' %}" class="btn btn-primary">Book Your First Appointment</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if appointments %}
+        <div class="card" style="margin-top: 2rem;">
+            <div class="card-header">
+                <div class="card-icon orange">📊</div>
+                <h2>Health Summary</h2>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <div class="stat-card">
+                    <h3>{{ appointments.count }}</h3>
+                    <p>Total Visits</p>
+                </div>
+                
+                <div class="stat-card">
+                    {% with appointments|first as latest %}
+                    <h3>{{ latest.date }}</h3>
+                    <p>Last Visit</p>
+                    {% endwith %}
+                </div>
+                
+                <div class="stat-card">
+                    {% regroup appointments by doctor.specialization as specializations %}
+                    <h3>{{ specializations|length }}</h3>
+                    <p>Specializations Visited</p>
+                </div>
+                
+                <div class="stat-card">
+                    {% regroup appointments by doctor as doctors %}
+                    <h3>{{ doctors|length }}</h3>
+                    <p>Different Doctors</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+.stat-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.stat-card h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2563eb;
+    margin: 0 0 0.5rem 0;
+}
+
+.stat-card p {
+    color: #6b7280;
+    margin: 0;
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}
+

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>Welcome to <span class="highlight">Smart Clinic</span></h1>
+        <p>A comprehensive healthcare management system connecting patients, doctors, and administrators in a seamless digital experience.</p>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon blue">🛡️</div>
+                <h3>Secure & Private</h3>
+                <p>Your medical data is protected with enterprise-grade security</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon green">💚</div>
+                <h3>Quality Care</h3>
+                <p>Connect with qualified healthcare professionals</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon orange">🕐</div>
+                <h3>24/7 Access</h3>
+                <p>Book appointments and access records anytime</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="role-selection">
+    <div class="container">
+        <h2>Choose Your Role</h2>
+        <p>Select your role to access the appropriate dashboard and features</p>
+        
+        <div class="roles-grid">
+            <div class="role-card patient">
+                <div class="role-icon patient">👤</div>
+                <h3>Patient</h3>
+                <p class="description">Book appointments, view medical history, and manage your health records</p>
+                <div class="role-badge patient">Personal Health Management</div>
+                <a href="{% url 'login' %}?role=patient" class="btn btn-primary btn-full">Access Patient Portal</a>
+            </div>
+            
+            <div class="role-card doctor">
+                <div class="role-icon doctor">🩺</div>
+                <h3>Doctor</h3>
+                <p class="description">Manage your schedule, view patient records, and provide quality care</p>
+                <div class="role-badge doctor">Healthcare Professional</div>
+                <a href="{% url 'login' %}?role=doctor" class="btn btn-success btn-full">Access Doctor Portal</a>
+            </div>
+            
+            <div class="role-card admin">
+                <div class="role-icon admin">⚙️</div>
+                <h3>Administrator</h3>
+                <p class="description">Manage users, clinics, and oversee the entire healthcare system</p>
+                <div class="role-badge admin">System Management</div>
+                <a href="{% url 'login' %}?role=admin" class="btn btn-warning btn-full">Access Admin Panel</a>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <p>Don't have an account? <a href="{% url 'register' %}" class="btn btn-outline">Register Here</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

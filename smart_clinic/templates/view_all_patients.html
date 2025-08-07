@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}All Patients - Smart Clinic{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>All Patients</h1>
+            <p>View and manage patient information</p>
+            <div class="dashboard-actions">
+                <a href="{% url 'doctor_dashboard' %}" class="btn btn-outline">← Back to Dashboard</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon blue">👥</div>
+                <h2>Patient List</h2>
+            </div>
+            
+            {% if patients %}
+                {% for patient in patients %}
+                <div class="appointment-item">
+                    <div class="appointment-info">
+                        <h4>{{ patient.name }}</h4>
+                        <p><strong>Age:</strong> {{ patient.age }} years old</p>
+                        <p><strong>Gender:</strong> {{ patient.gender|title }}</p>
+                        <p><strong>Blood Type:</strong> {{ patient.blood_type }}</p>
+                        {% if patient.medical_history %}
+                            <p><strong>Medical History:</strong> {{ patient.medical_history|truncatewords:10 }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="appointment-actions">
+                        <a href="{% url 'patient_detail' patient.user.id %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="text-center">
+                    <p>No patients found in the system.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
